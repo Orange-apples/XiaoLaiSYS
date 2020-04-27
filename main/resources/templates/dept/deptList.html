@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html style="overflow: hidden;" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Olive Enterprise">
+    <link rel="shortcut icon" href="http://localhost:8080/EnterpriseInternalCommunication/homePage/img/favicon.ico">
+    <!-- END SHORTCUT ICON -->
+    <title>小莱信息化管理系统</title>
+    <div th:replace="/base/link::link"></div>
+</head>
+<body onpageshow='event.persisted&amp;&amp;(function(){var x=CKEDITOR.instances,d,i;for(i in x){d=x[i].document;if(d){d.$.designMode="off";d.$.designMode="on";}}})();;event.persisted&amp;&amp;(function(){var x=CKEDITOR.instances,d,i;for(i in x){d=x[i].document;if(d){d.$.designMode="off";d.$.designMode="on";}}})();'>
+<section id="container">
+
+
+    <div th:replace="/base/body::body"></div>
+
+    <section id="main-content">
+
+        <section class="wrapper">
+            <div class="row" id="departmentbar">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <div class="panel-body">
+                            <form class="form-inline" role="form" method="get" action="/depts?pages=1">
+                                <div class="form-group">
+                                    <label class="sr-only" for="name">部门名称</label> <input th:value="${name}"
+                                                                                          class="form-control" id="name"
+                                                                                          name="name" placeholder="部门名称"
+                                                                                          type="text">
+                                </div>
+                                <button type="submit" class="btn btn-round btn-info" id="search_but">检索</button>
+                                <button type="reset" class="btn btn-round btn-default" id="clean_but">清空</button>
+                                <button type="button" class="btn  btn-info" onclick="location.href='/depts/getView'"
+                                        id="add_but" style="margin-left:50px;">添加部门
+                                </button>
+                                <button type="button" class="btn  btn-success" onclick="updateDepartment()"
+                                        id="edit_but">编辑部门
+                                </button>
+                                <button type="button" class="btn  btn-success" onclick="deleteDepartment()">删除部门
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12" id="department_main">
+
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <span class="label label-primary">部门信息列表 </span>
+                        </header>
+                        <div class="panel-body" style="overflow: auto">
+                            <section id="unseen">
+                                <table class="table table-bordered table-striped table-condensed" id="departmentlist">
+                                    <thead>
+                                    <tr>
+                                        <th style="text-align: center"><input name="all" value="true" id="selectAll"
+                                                                              style="display:none;"
+                                                                              type="checkbox"><input
+                                                id="__checkbox_selectAll" name="__checkbox_all" value="true"
+                                                type="hidden"></th>
+                                        <th>序号</th>
+                                        <th>部门编号</th>
+                                        <th>部门名称</th>
+                                        <th>部门描述</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <form action="/depts" id="deleteForm" method="post">
+                                        <input name="_method" type="hidden" th:value="DELETE"/>
+
+
+                                        <tr th:each="dept:${depts}" th:object="${dept}">
+                                            <td style="text-align: center">
+                                                <input name="ids" th:value="*{id}" id="sel" type="checkbox">
+                                            </td>
+                                            <td th:text="*{id}">1</td>
+                                            <td th:text="*{dNo}">D20170001</td>
+                                            <td th:text="*{name}">人事部</td>
+                                            <td th:text="*{content}">人力资源管理<br></td>
+                                        </tr>
+
+
+                                    </form>
+                                    </tbody>
+                                </table>
+
+                                <!--
+                                <div class="row-fluid">
+                                    <div class="span6">
+                                        <div class="dataTables_info" id="example_info">
+                                            当前共有<span class="number" style="color: red;" th:text="${page.total}">2 </span>条记录
+                                        </div>
+                                    </div>
+                                    <div class="span6">
+                                        <div class="dataTables_paginate paging_bootstrap pagination">
+                                            <ul>
+
+                                                    <li class="prev"><a th:href="@{/depts(pages=1,name=${name==null?'':name})}">首页</a></li>
+
+
+                                                        <li th:if="${page.pageNum ne 1}" class="prev disabled"><a th:href="@{/depts(pages=${page.pageNum - 1},name=${name==null?'':name})}">上一页</a></li>
+
+
+
+
+
+                                                <li>
+                                                <a th:if="${page.pageNum > 1}" th:href="@{/depts(pages=${page.pageNum - 1},name=${name==null?'':name})}"><span class="thispage" id="thisPage" style="height: 18px; padding-top: 2px !important;" th:text="${page.pageNum-1}"> 1
+                                                </span></a></li>
+                                                <li class="active">
+                                                <a th:href="@{/depts(pages=${page.pageNum},name=${name==null?'':name})}"><span class="thispage" id="thisPage" style="height: 18px; padding-top: 2px !important;" th:text="${page.pageNum}"> 1
+                                                </span></a></li>
+                                                <li><a th:if="${page.pageNum < page.pages}" th:href="@{/depts(pages=${page.pageNum + 1},name=${name==null?'':name})}"><span class="thispage" id="thisPage" style="height: 18px; padding-top: 2px !important;" th:text="${page.pageNum+1}"> 1
+                                                </span></a></li>
+
+
+
+                                                        <li th:if="${page.pageNum ne page.pages}" class="prev disabled"><a th:href="@{/depts(pages=${page.pageNum+1},name=${name==null?'':name})}">下一页</a></li>
+
+
+
+
+
+
+
+
+                                                        <li class="prev disabled"><a th:href="@{/depts(pages=${page.pages},name=${name==null?'':name})}">尾页</a></li>
+
+
+
+
+
+
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>-->
+
+                            </section>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </section>
+    <!-- END MAIN CONTENT -->
+    <!-- BEGIN FOOTER -->
+
+    <footer class="site-footer" style="position:fixed;bottom:0px;left:0px;width:100% !important;">
+        <div class="text-center">
+            2018 © 小莱信息化管理系统 <a href="#" class="go-top"> <i class="fa fa-angle-up"> </i>
+        </a>
+        </div>
+    </footer>
+</section>
+<!-- END SECTION -->
+<!-- BEGIN JS -->
+<script src="js/jquery-1.js"></script>
+<!-- BASIC JQUERY 1.8.3 LIB. JS -->
+<script src="js/bootstrap.js"></script>
+<!-- BOOTSTRAP JS -->
+<script src="js/jquery.js"></script>
+<!-- ACCORDIN JS -->
+<script src="js/jquery_002.js"></script>
+<!-- SCROLLTO JS -->
+<script src="js/jquery_007.js"></script>
+<!-- NICESCROLL JS -->
+<script src="js/respond.js"></script>
+<!-- RESPOND JS -->
+<script src="js/jquery_006.js"></script>
+<!-- SPARKLINE JS -->
+<script src="js/sparkline-chart.js"></script>
+<!-- SPARKLINE CHART JS -->
+<script src="js/common-scripts.js"></script>
+<div style="width: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; left: 202px; height: 623px; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2000">
+    <div style="position: relative; top: 0px; float: right; width: 8px; height: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; top: 615px; left: 0px; position: fixed; cursor: default; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2000-hr">
+    <div style="position: relative; top: 0px; height: 8px; width: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px; left: 0px;"></div>
+</div>
+<div style="width: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; height: 100%; right: 0px; display: none;"
+     class="nicescroll-rails" id="ascrail2001">
+    <div style="position: relative; top: 0px; float: right; width: 6px; height: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; position: fixed; left: 0px; width: 100%; bottom: 0px; cursor: default; display: none;"
+     class="nicescroll-rails" id="ascrail2001-hr">
+    <div style="position: relative; top: 0px; height: 6px; width: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="width: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; left: 202px; height: 623px; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2000">
+    <div style="position: relative; top: 0px; float: right; width: 8px; height: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; top: 615px; left: 0px; position: fixed; cursor: default; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2000-hr">
+    <div style="position: relative; top: 0px; height: 8px; width: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px; left: 0px;"></div>
+</div>
+<div style="width: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; height: 100%; right: 0px; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2001">
+    <div style="position: relative; top: 0px; float: right; width: 6px; height: 611px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; position: fixed; left: 0px; width: 100%; bottom: 0px; cursor: default; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2001-hr">
+    <div style="position: relative; top: 0px; height: 6px; width: 1117px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<!-- BASIC COMMON JS -->
+<script src="js/count.js"></script>
+<!-- COUNT JS -->
+<!--Morris-->
+<script src="js/morris.js"></script>
+<!-- MORRIS JS -->
+<script src="js/raphael-min.js"></script>
+<!-- MORRIS  JS -->
+<script src="js/chart.js"></script>
+<!-- CHART JS -->
+<!-- CALENDER EVENT JS -->
+<script src="js/moment-2.js"></script>
+<!-- CALENDER MOMENT JS -->
+<!-- UNDERSCORE JS -->
+<script src="js/jquery_008.js"></script>
+<script src="js/jquery_005.js"></script>
+<script src="js/main.js"></script>
+<script src="js/jquery_004.js"></script>
+<script src="js/jquery_003.js"></script>
+<script src="js/SystemUtil.js"></script>
+<script src="js/divUtils.js"></script>
+<script src="js/WdatePicker.js"></script>
+<script src="js/wysihtml5-0.js"></script><!-- BOOTSTRAP wysihtml5 JS  -->
+<script src="js/bootstrap-wysihtml5.js"></script>
+<script src="js/bootstrap-fileupload.js"></script>
+<script src="js/ckeditor.js"></script><!-- CKEDITOR JS  -->
+<!-- JQUERY KNOB JS -->
+<script>
+    //knob
+    $(".knob").knob();
+</script>
+<script type="text/javascript">
+    function deleteDepartment() {
+
+        var r = document.getElementsByName("ids");
+        var flag = false;
+        for (var i = 0; i < r.length; i++) {
+            if (r[i].checked) {
+
+                flag = true;
+                break;
+            }
+        }
+        if (flag) {
+            $('#deleteForm').submit();
+
+        } else {
+            alert("请选择一条数据删除！！！")
+        }
+
+    }
+
+    function updateDepartment() {
+
+        var r = document.getElementsByName("ids");
+        var flag = false;
+        var num = 0;
+        for (var i = 0; i < r.length; i++) {
+            if (r[i].checked) {
+
+                flag = true;
+                num++;
+            }
+        }
+        if (flag == false) {
+            alert("请选择一条数据修改！！！")
+        } else if (num > 1) {
+
+            alert("不能选择多条数据修改！！！")
+        } else {
+            $("#deleteForm").attr('action', "/depts/getView");
+            $('#deleteForm').submit();
+        }
+
+    }
+
+</script>
+
+</body>
+</html>

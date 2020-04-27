@@ -1,0 +1,80 @@
+.dialog1-mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    z-index: 10;
+    filter: alpha(opacity=50);
+    opacity: .5;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.dialog1 {
+    border: 1px solid #ddd;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    background-color: #fff;
+    display: none;
+}
+
+.dialog1 .dialog1-head, .dialog1 .dialog1-foot {
+    padding: 10px 20px;
+}
+
+.dialog1 .dialog1-head {
+    border-bottom: solid 1px #ddd;
+    background-color: #f5f5f5;
+    border-radius: 4px 4px 0 0;
+}
+
+.dialog1 .dialog1-head strong {
+    font-size: 16px;
+}
+
+.dialog1 .dialog1-head .close1 {
+    float: right;
+    line-height: 24px;
+}
+
+.dialog1 .dialog1-body {
+    padding: 15px 20px;
+}
+
+.dialog1 .dialog1-foot {
+    text-align: right;
+    border-top: solid 1px #ddd;
+}
+
+.dialog1.open {
+    display: block;
+}
+
+.close1 {
+    display: inline-block;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 24px;
+}
+
+.close1:before {
+    content: "\00d7";
+}
+
+.rotate1, .rotate1-hover {
+    -webkit-animation: 2s infinite linear;
+    -moz-animation: 2s infinite linear;
+    -ms-animation: 2s infinite linear;
+    animation: 2s infinite linear;
+}
+
+.bg-white, .button.bg, .border-white .button.active, .pointer.border-white .active, .nav-pills.border-white .active a, .nav-main.border-white .nav-head, .pagination.border-white .active {
+    background-color: #fff;
+}
+
+.errorSpan {
+    color: red;
+}

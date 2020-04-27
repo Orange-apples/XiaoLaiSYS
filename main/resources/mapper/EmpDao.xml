@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.li.demo.dao.EmpDao">
+    <cache/>
+    <resultMap type="com.li.demo.entity.Emp" id="EmpMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="empNo" column="emp_no" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="deptId" column="dept_id" jdbcType="INTEGER"/>
+        <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+        <association property="dept" column="dept_id" select="com.li.demo.dao.DeptDao.queryById"/>
+        <association property="role" column="role_id" select="com.li.demo.dao.RoleDao.queryById"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="EmpMap">
+        select
+          id, emp_no, name, sex, phone, dept_id, role_id, state
+        from spring4.emp
+        where id = #{id}
+    </select>
+
+
+    <!--查询所有-->
+    <select id="queryAll" resultMap="EmpMap">
+        select
+        id, emp_no, name, sex, phone, dept_id, role_id, state
+        from spring4.emp
+        <where>
+            <if test="name!=null and name!=''">
+                <bind name="name" value="'%'+name+'%'"/>
+                and name like #{name}
+            </if>
+            <if test="empNo!=null and empNo!=''">
+                <bind name="empNo" value="'%'+empNo+'%'"/>
+                and empNo like #{empNo}
+            </if>
+        </where>
+
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into spring4.emp(emp_no, name, sex, phone, dept_id, role_id, state)
+        values (#{empNo}, #{name}, #{sex}, #{phone}, #{deptId}, #{roleId}, #{state})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update spring4.emp
+        <set>
+            <if test="empNo != null and empNo != ''">
+                emp_no = #{empNo},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="deptId != null">
+                dept_id = #{deptId},
+            </if>
+            <if test="roleId != null">
+                role_id = #{roleId},
+            </if>
+            <if test="state != null and state != ''">
+                state = #{state},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from spring4.emp where id = #{id}
+    </delete>
+
+    <!--查询ids-->
+    <select id="queryIds" resultType="java.lang.Integer" parameterType="emp">
+        select id from emp
+        <where>
+            <if test="name!=null and name!=''">
+                <bind name="name" value="'%'+name+'%'"/>
+                and name like #{name}
+            </if>
+            <if test="empNo!=null and empNo!=''">
+                <bind name="empNo" value="'%'+empNo+'%'"/>
+                and empNo like #{empNo}
+            </if>
+        </where>
+    </select>
+
+</mapper>

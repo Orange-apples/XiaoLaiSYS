@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html style="overflow: hidden;" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Olive Enterprise">
+</head>
+<!-- END SHORTCUT ICON -->
+<title>小莱信息化管理系统</title>
+<div th:replace="~{/base/link::link}"></div>
+</head>
+<body onpageshow='event.persisted&amp;&amp;(function(){var x=CKEDITOR.instances,d,i;for(i in x){d=x[i].document;if(d){d.$.designMode="off";d.$.designMode="on";}}})();;event.persisted&amp;&amp;(function(){var x=CKEDITOR.instances,d,i;for(i in x){d=x[i].document;if(d){d.$.designMode="off";d.$.designMode="on";}}})();'>
+<section id="container">
+    <div th:replace="~{/base/body::body}"></div>
+
+
+    <section id="main-content">
+
+        <section class="wrapper">
+            <div style="display: none;" class="row" id="userbar">
+                <div class="col-lg-12">
+                    <section class="panel">
+                        <div class="panel-body">
+                            <form class="form-inline" role="form">
+                                <div class="form-group">
+                                    <label class="sr-only" for="username">登录用户名</label> <input class="form-control"
+                                                                                               id="username"
+                                                                                               placeholder="登录用户名"
+                                                                                               type="text">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="name">姓名</label>
+                                    <input class="form-control" id="name" placeholder="姓名" type="text">
+                                </div>
+                                <button type="button" class="btn btn-round btn-info" id="search_but">检索</button>
+                                <button type="button" class="btn btn-round btn-default" id="clean_but">清空</button>
+                                <button type="button" class="btn  btn-info" id="add_but" style="margin-left:50px;"><i
+                                        class="fa fa-plus"></i>添加员工
+                                </button>
+                                <button type="button" class="btn  btn-success" id="edit_but"><i
+                                        class="fa fa-wrench"></i>编辑员工
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12" id="user_main">
+
+                    <div class="col-md-12">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <span class="label label-primary" th:text="${emp==null?'添加员工信息':'修改员工信息'}"></span> <span
+                                    class="tools pull-right"> </span>
+                            </header>
+                            <div class="panel-body">
+                                <form novalidate="novalidate" class="form-horizontal tasi-form" method="post"
+                                      id="addForm" action="/emps">
+                                    <input type="hidden" th:if="${emp!=null}" name="_method" th:value="PUT"/>
+                                    <input type="hidden" name="id" th:value="${emp!=null?emp.id:''}"/>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">员工姓名</label>
+                                        <div class="col-md-3 col-xs-11">
+                                            <input name="name" th:value="${emp!=null?emp.name:''}" id="name"
+                                                   class="form-control form-control-inline input-medium default-date-picker"
+                                                   style="width:80px;" type="text">
+                                            <span class="help-block" style="color: red;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">性别</label>
+                                        <div class="col-md-3 col-xs-11">
+                                            <input name="sex" th:checked="${emp!=null?emp.sex eq '男':true}" value="男"
+                                                   type="radio"><label for="user_sex男">男</label>
+                                            <input name="sex" th:checked="${emp!=null?emp.sex eq '女':false}" value="女"
+                                                   type="radio"><label for="user_sex女">女</label>
+
+                                            <span class="help-block" style="color: red;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">联系电话</label>
+                                        <div class="col-md-3 col-xs-11">
+                                            <input name="phone" th:value="${emp!=null?emp.phone:''}" id="phone"
+                                                   class="form-control form-control-inline input-medium default-date-picker"
+                                                   style="width:120px;" type="text">
+                                            <span class="help-block" style="color: red;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">状态</label>
+                                        <div class="col-md-3 col-xs-11">
+                                            <input name="state" id="email" th:value="${emp!=null?emp.state:''}"
+                                                   class="form-control form-control-inline input-medium default-date-picker"
+                                                   style="width:180px;" type="text">
+                                            <span class="help-block" style="color: red;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">所属部门</label>
+                                        <div class="col-md-3 col-xs-11">
+                                            <select name="deptId" id="department"
+                                                    class="form-control form-control-inline input-medium default-date-picker"
+                                                    style="width:240px;">
+
+                                                <option th:each="dept:${depts}" th:text="${dept.name}"
+                                                        th:value="${dept.id}"
+                                                        th:selected="${emp!=null?emp.dept.name eq dept.name:''}"></option>
+
+
+                                            </select>
+
+                                            <span class="help-block" style="color: red;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3">角色权限</label>
+                                        <div class="col-md-3 col-xs-11">
+                                            <select name="roleId" id="authority"
+                                                    class="form-control form-control-inline input-medium default-date-picker"
+                                                    style="width:180px;">
+                                                <option th:selected="${emp!=null?emp.role.name eq role.name:''}"
+                                                        th:each="role:${roles}" th:value="${role.id}"
+                                                        th:text="${role.name}">管理员
+                                                </option>
+
+
+                                            </select>
+
+                                            <span class="help-block" style="color: red;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <input th:value="${emp==null?'添加':'修改'}" class="btn btn-success" type="submit">
+                                        &nbsp;&nbsp;&nbsp;
+                                        <input value="取消" class="btn" id="cancel_b" type="button"
+                                               onclick="location.href='/emps'">
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+    <!-- END MAIN CONTENT -->
+    <!-- BEGIN FOOTER -->
+
+    <footer class="site-footer" style="position:fixed;bottom:0px;left:0px;width:100% !important;">
+        <div class="text-center">
+            2018 © 小莱信息化管理系统 <a href="#" class="go-top"> <i class="fa fa-angle-up"> </i>
+        </a>
+        </div>
+    </footer>
+</section>
+<!-- END SECTION -->
+<!-- BEGIN JS -->
+<script src="js/jquery-1.js"></script>
+<!-- BASIC JQUERY 1.8.3 LIB. JS -->
+<script src="js/bootstrap.js"></script>
+<!-- BOOTSTRAP JS -->
+<script src="js/jquery.js"></script>
+<!-- ACCORDIN JS -->
+<script src="js/jquery_002.js"></script>
+<!-- SCROLLTO JS -->
+<script src="js/jquery_007.js"></script>
+<!-- NICESCROLL JS -->
+<script src="js/respond.js"></script>
+<!-- RESPOND JS -->
+<script src="js/jquery_006.js"></script>
+<!-- SPARKLINE JS -->
+<script src="js/sparkline-chart.js"></script>
+<!-- SPARKLINE CHART JS -->
+<script src="js/common-scripts.js"></script>
+<div style="width: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; left: 202px; height: 623px; display: none;"
+     class="nicescroll-rails" id="ascrail2000">
+    <div style="position: relative; top: 0px; float: right; width: 8px; height: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; top: 615px; left: 0px; position: fixed; cursor: default; display: none;"
+     class="nicescroll-rails" id="ascrail2000-hr">
+    <div style="position: relative; top: 0px; height: 8px; width: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="width: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; height: 100%; right: 0px; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2001">
+    <div style="position: relative; top: 0px; float: right; width: 6px; height: 611px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; position: fixed; left: 0px; width: 100%; bottom: 0px; cursor: default; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2001-hr">
+    <div style="position: relative; top: 0px; height: 6px; width: 1115px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="width: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; left: 202px; height: 623px; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2000">
+    <div style="position: relative; top: 0px; float: right; width: 8px; height: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 8px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; top: 615px; left: 0px; position: fixed; cursor: default; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2000-hr">
+    <div style="position: relative; top: 0px; height: 8px; width: 0px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px; left: 0px;"></div>
+</div>
+<div style="width: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; cursor: default; position: fixed; top: 0px; height: 100%; right: 0px; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2001">
+    <div style="position: relative; top: 0px; float: right; width: 6px; height: 611px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<div style="height: 6px; z-index: 1000; background: rgb(17, 96, 119) none repeat scroll 0% 0%; position: fixed; left: 0px; width: 100%; bottom: 0px; cursor: default; display: none; opacity: 0;"
+     class="nicescroll-rails" id="ascrail2001-hr">
+    <div style="position: relative; top: 0px; height: 6px; width: 1117px; background-color: rgb(114, 208, 235); background-clip: padding-box; border-radius: 10px;"></div>
+</div>
+<!-- BASIC COMMON JS -->
+<script src="js/count.js"></script>
+<!-- COUNT JS -->
+<!--Morris-->
+<script src="js/morris.js"></script>
+<!-- MORRIS JS -->
+<script src="js/raphael-min.js"></script>
+<!-- MORRIS  JS -->
+<script src="js/chart.js"></script>
+<!-- CHART JS -->
+<!-- CALENDER EVENT JS -->
+<script src="js/moment-2.js"></script>
+<!-- CALENDER MOMENT JS -->
+<!-- UNDERSCORE JS -->
+<script src="js/jquery_008.js"></script>
+<script src="js/jquery_005.js"></script>
+<script src="js/main.js"></script>
+<script src="js/jquery_004.js"></script>
+<script src="js/jquery_003.js"></script>
+<script src="js/SystemUtil.js"></script>
+<script src="js/divUtils.js"></script>
+<script src="js/WdatePicker.js"></script>
+<script src="js/wysihtml5-0.js"></script><!-- BOOTSTRAP wysihtml5 JS  -->
+<script src="js/bootstrap-wysihtml5.js"></script>
+<script src="js/bootstrap-fileupload.js"></script>
+<script src="js/ckeditor.js"></script><!-- CKEDITOR JS  -->
+<!-- JQUERY KNOB JS -->
+<script>
+    //knob
+    $(".knob").knob();
+</script>
+
+</body>
+</html>
