@@ -36,7 +36,7 @@ public class DruidConfig {
 
         initParams.put("loginPassword", "admin");
 
-        initParams.put("allow", "");// 默认就是允许所有访问
+        initParams.put("allow", "" );// 默认就是允许所有访问
 
         initParams.put("deny", "10.18.172.124");
 
