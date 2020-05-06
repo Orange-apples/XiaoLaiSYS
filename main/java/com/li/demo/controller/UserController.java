@@ -41,7 +41,8 @@ public class UserController {
     @PostMapping
     public String login(User user, ModelMap map, HttpServletRequest request) {
         String host = request.getRemoteHost();
-        User login = userService.login(user);
+        User login = null;
+
         if (!redisTemplate.hasKey(host + ":seconds")) login = userService.login(user);
         if (login == null) {//登陆失败
             String msg = "";
@@ -52,7 +53,7 @@ public class UserController {
             System.out.println(count);
             if (count > 0) {
 
-                msg = "用户名密码错误，登录失败" + 5 + "次后，将限制登录！";
+                msg = "用户名密码错误，登录失败" + count + "次后，将限制登录！";
             } else {
                 redisTemplate.delete(host + ":count");
                 if (!redisTemplate.hasKey(host + ":seconds"))
